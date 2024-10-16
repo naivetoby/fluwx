@@ -146,7 +146,11 @@ internal interface FluwxShareHandler : CoroutineScope {
                 WXImageObject().apply {
                     val uint8List = map["uint8List"] as? ByteArray
                     uint8List?.let {
-                        imageData = it
+                        if (supportFileProvider && targetHigherThanN) {
+                            setImagePath(getFileContentUri(it.toCacheFile(context, ".png")))
+                        } else {
+                            imagePath = it.toExternalCacheFile(context, ".png")?.absolutePath
+                        }
                         imgDataHash = imgHash
                     }
                 }
